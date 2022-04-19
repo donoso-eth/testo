@@ -24,11 +24,13 @@ export class StreamComponent extends DappBaseComponent {
 
 
   deployer_balance!: number;
-
-  eveStream!: ISTREAM_DISPLAY;
+  signerStream: ISTREAM_DISPLAY = { balanceDAI: 0, balanceDAIx:0, streams:[]}
+  aliceStream: ISTREAM_DISPLAY = { balanceDAI: 0, balanceDAIx:0, streams:[]}
+  bobStream: ISTREAM_DISPLAY = { balanceDAI: 0, balanceDAIx:0, streams:[]}
+  eveStream: ISTREAM_DISPLAY = { balanceDAI: 0, balanceDAIx:0, streams:[]}
   DAPP_STATE: any;
   DAIx!: SuperToken ;
-
+  DAI!: Contract;
 
   constructor(
     dapp: DappInjector,
@@ -45,8 +47,15 @@ export class StreamComponent extends DappBaseComponent {
   };
 
   override async hookContractConnected(): Promise<void> {
+  
+  
     this.deployer = this.dapp.signer!;
   
+    this.DAI = new Contract("0x15F0Ca26781C3852f8166eD2ebce5D18265cceb7",abi_ERC20,this.signer) 
+
+    const daiBalance = await this.DAI.balanceOf(this.signerAdress)
+      console.log((daiBalance/(10**18)).toString())
+
     this.DAIx= await this.superFluidService.sf.loadSuperToken(
       this.superFluidService.superToken
     );
@@ -57,11 +66,15 @@ export class StreamComponent extends DappBaseComponent {
     // const eveStream = await this.getDaiBalance(this.eve.user_address);
     // console.log(eveStream);
 
-    this.eveStream = { balance: 0, streams: [
+    this.eveStream = { balanceDAI: 0, balanceDAIx:0, streams: [
       { value:3858024691358000, address:this.dapp.signerAddress!},
       { value:-1858024691358000, address:this.fake_accounts.bob.user_address}
     ] };
     console.log(this.eveStream);
+  }
+
+  async doFaucet(){
+    
   }
 
   async getAccounFlow(user: FakeUser ) {

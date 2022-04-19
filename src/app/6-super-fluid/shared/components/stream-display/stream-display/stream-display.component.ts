@@ -62,7 +62,7 @@ export class StreamDisplayComponent implements OnChanges, OnInit, OnDestroy {
     const subscribe = source
       .pipe(takeUntil(this.destroyHooks))
       .subscribe((val) => {
-        this.prepareNumbers(+this.stream.balance + (val * this.flowRate) / 10);
+        this.prepareNumbers(+this.stream.balanceDAIx + (val * this.flowRate) / 10);
       });
   }
 

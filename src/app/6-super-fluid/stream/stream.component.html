@@ -25,14 +25,23 @@
 <div class="wrapper_blocks" >
 
   <div>
-    <address-show [address_to_show]="deployer_address"></address-show> 
-    <stream-display class="user_block" *ngIf="eveStream !== undefined"  [stream]="eveStream"></stream-display>
+    <address-show style="font-size:22px;font-weight:400" [address_to_show]="signerAdress"></address-show>   <i (click)="doFaucet()" style="
+    position: absolute;
+    top: 3px;
+    left: 6px;
+    font-size: 15px;
+    color: #ff4081;
+    cursor: pointer;
+  " class="material-icons">local_gas_station</i>
+ 
+    <stream-display class="user_block" *ngIf="signerStream !== undefined"  [stream]="signerStream"></stream-display>
   </div>
 
   <div>
-    <!-- <stream-display class="user_block" *ngIf="eveStream !== undefined"  [stream]="eveStream"></stream-display>
+  <stream-display class="user_block" *ngIf="aliceStream !== undefined"  [stream]="aliceStream"></stream-display>
   </div>
 
+  <!-- 
   <div>
     <stream-display class="user_block" *ngIf="eveStream !== undefined"  [stream]="eveStream"></stream-display>
   </div>

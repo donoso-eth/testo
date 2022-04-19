@@ -1,5 +1,6 @@
 export interface ISTREAM_DISPLAY {
-  balance: number;
+  balanceDAIx: number;
+  balanceDAI:number;
   streams: Array<{value:number, address:string}>;
 }
 

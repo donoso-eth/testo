@@ -1,5 +1,5 @@
 
-    <span>
+    <span *ngIf="!!address_to_show">
       {{
         address_to_show.slice(0, 5) +
           "..." +
@@ -9,3 +9,7 @@
           )
       }}
     </span>
+    <button   mat-raised-button color="accent" style="margin: 0 5px 0 5px; transform: scale(0.7);    position: relative;top: -5px;" class="btn btn-light"
+      [cdkCopyToClipboard]="address_to_show">
+      <i class="material-icons">content_copy</i>
+    </button>
