@@ -5,8 +5,10 @@ import {
   SuperToken,
 } from '@superfluid-finance/sdk-core';
 import { DappBaseComponent, DappInjector } from 'angular-web3';
-import { Signer, Contract, Wallet } from 'ethers';
+import { Signer, Contract, Wallet, Bytes, utils } from 'ethers';
 import { interval, takeUntil } from 'rxjs';
+import { DialogService } from 'src/app/dapp-components';
+import { doSignerTransaction } from 'src/app/dapp-injector/classes/transactor';
 import { SuperFluidServiceService } from 'src/app/dapp-injector/services/super-fluid/super-fluid-service.service';
 
 import { FakeUser, IFakeUser, ISTREAM_DISPLAY } from '../shared/models/models';
@@ -35,7 +37,8 @@ export class StreamComponent extends DappBaseComponent {
   constructor(
     dapp: DappInjector,
     store: Store,
-    private superFluidService: SuperFluidServiceService
+    private superFluidService: SuperFluidServiceService,
+    private dialog:DialogService
   ) {
     super(dapp, store);
   }
@@ -60,7 +63,7 @@ export class StreamComponent extends DappBaseComponent {
       this.superFluidService.superToken
     );
 
-
+    this.refreshBalances()
 
 
     // const eveStream = await this.getDaiBalance(this.eve.user_address);
@@ -73,9 +76,37 @@ export class StreamComponent extends DappBaseComponent {
     console.log(this.eveStream);
   }
 
-  async doFaucet(){
-    
+  async doFaucet(user:FakeUser){
+
+    const myAdress= utils.getAddress(this.fake_accounts[user].user_address) 
+
+    console.log(myAdress)
+
+    await doSignerTransaction(this.DAI.transfer(myAdress,100))
+    this.refreshBalances();
   }
+
+  async launchStream(user:FakeUser){
+
+    const result = await this.dialog.openOperation({accounts:this.fake_accounts, dispatcher:user, action:'stream'})
+
+  }
+
+
+  async refreshBalances(){
+    //// alice
+    const aliceDaiBalance = await this.DAI.balanceOf(this.fake_accounts.alice.user_address)
+    const flow = await this.getAccounFlow('alice')
+    this.aliceStream = {balanceDAI: aliceDaiBalance, balanceDAIx:0, streams:[]}
+
+    /// bob
+    const bobDaiBalance = await this.DAI.balanceOf(this.fake_accounts.bob.user_address)
+
+
+    //// eve
+    const eveDaiBalance = await this.DAI.balanceOf(this.fake_accounts.eve.user_address)
+  }
+
 
   async getAccounFlow(user: FakeUser ) {
     const result = await this.superFluidService.getAccountFlowInfo({

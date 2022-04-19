@@ -16,8 +16,8 @@ export class DialogService {
   constructor(public dialog: MatDialog) {}
   async openTransaction() {
     const dialogRef = this.dialog.open(TransactionComponent, {
-      //   width: '80%',
-      //   maxWidth: '400px',
+        width: '80%',
+       maxWidth: '400px',
       //   data: {},
     });
 
@@ -25,11 +25,11 @@ export class DialogService {
     return result;
   }
 
-  async openOperation() {
+  async openOperation(options:{dispatcher:any,accounts:any, action:any}) {
     const dialogRef = this.dialog.open(OperationComponent, {
-      //   width: '80%',
-      //   maxWidth: '400px',
-      //   data: {},
+        width: '80%',
+         maxWidth: '300px',
+        data: { accounts:options.accounts, dispatcher:options.dispatcher, action:options.action},
     });
     const result = await firstValueFrom(dialogRef.afterClosed());
 

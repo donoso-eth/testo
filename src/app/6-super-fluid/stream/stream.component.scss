@@ -8,13 +8,33 @@
 
     display: block;
 
-    :first {
-        margin-left:0px;
+    .user {
+        border:1px solid lightgrey
     }
+
+ 
 
     :last-child {
         background-color: red;
     }
 
-    margin:20px;
+    margin:10px;
+}
+
+.stream {
+    top: 5px;
+    position: relative;
+    font-size: 27px;
+    color: #3ebf31;
+    cursor: pointer;
+}
+
+.faucet {
+    position: relative;
+    top: -4px;
+    /* left: 6px; */
+    right: 10px;
+    font-size: 28px;
+    color: #ff4081;
+ 
 }

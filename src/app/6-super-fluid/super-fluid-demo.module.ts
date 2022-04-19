@@ -5,7 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatButtonModule } from '@angular/material/button';
 
-import {AddressShowModule, BlockchainModule, ContractShowModule, DialogModule, HomeModule, NotifierModule, WalletDisplayModule} from '../dapp-components'
+import {AddressShowModule, BlockchainModule, ContractShowModule, DappLoadingModule, DialogModule, HomeModule, NotifierModule, WalletDisplayModule} from '../dapp-components'
 
 
 import { ICONTRACT_METADATA } from 'angular-web3';
@@ -41,7 +41,7 @@ export const contractProvider= {provide: 'contractMetadata', useValue:SuperFluid
     HomeModule,
     DialogModule,
     NotifierModule,
-
+    DappLoadingModule, 
     SuperFluidServiceModule,
 
     StreamDisplayModule,
