@@ -1,0 +1,20 @@
+.wrapper_blocks {
+    display: flex;
+    justify-content: center;
+
+}
+
+.user_block {
+
+    display: block;
+
+    :first {
+        margin-left:0px;
+    }
+
+    :last-child {
+        background-color: red;
+    }
+
+    margin:20px;
+}

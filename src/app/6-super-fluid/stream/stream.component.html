@@ -1,0 +1,45 @@
+<div style="display: flex; justify-content: center">
+  <div></div>
+</div>
+
+<p style="margin: 10px; border-top: 1px solid grey">
+  <!-- <button (click)="startStream()" mat-raised-button color="accent" style="margin: 10px" class="btn_send">
+    Start Flow
+  </button>
+  <button (click)="getFlow()" mat-raised-button color="accent" style="margin: 10px" class="btn_send">
+    Get Flow
+  </button>
+  <button (click)="getAccounFlow()" mat-raised-button color="accent" style="margin: 10px" class="btn_send">
+    GetAccount Flow
+  </button>
+  <br />
+  <button (click)="stopStream()" mat-raised-button color="accent" style="margin: 10px" class="btn_send">
+    Stop Flow
+  </button> -->
+</p>
+<p>
+  <button (click)="stopQuery()" mat-raised-button color="accent" style="margin: 10px" class="btn_send">
+    Stop Query
+  </button>
+</p>
+<div class="wrapper_blocks" >
+
+  <div>
+    <address-show [address_to_show]="deployer_address"></address-show> 
+    <stream-display class="user_block" *ngIf="eveStream !== undefined"  [stream]="eveStream"></stream-display>
+  </div>
+
+  <div>
+    <!-- <stream-display class="user_block" *ngIf="eveStream !== undefined"  [stream]="eveStream"></stream-display>
+  </div>
+
+  <div>
+    <stream-display class="user_block" *ngIf="eveStream !== undefined"  [stream]="eveStream"></stream-display>
+  </div>
+
+  <div>
+    <stream-display class="user_block" *ngIf="eveStream !== undefined"  [stream]="eveStream"></stream-display>
+  </div> -->
+
+
+</div>
