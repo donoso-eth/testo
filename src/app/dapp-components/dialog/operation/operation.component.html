@@ -1,5 +1,5 @@
 <form  [formGroup]="input_form" class="example-form">
-
+      <p style="font-size:18px">{{dispatcher}}</p>
       <mat-form-field   appearance="fill" style="width:100%;">
         <mat-select [formControl]="actionCtrl">
           <mat-option
@@ -26,7 +26,7 @@
         <mat-label>Amount in US$/Month</mat-label>
         <input formControlName="amountCtrl"  matInput placeholder="Amount in US$/month" value="Sushi">
       </mat-form-field>
-      <span style="color:green">FlowRate: {{flowRatePerSecond.toFixed(0)}} gwei/seecond</span>
+      <span style="color:green">FlowRate: {{flowRatePerSecond}} gwei/seecond</span>
       <div style="text-align: right;" class="example-button-container">
         <button  (click)="doTransaction()"  [disabled]="input_form.invalid" mat-fab color="warn" aria-label="Example icon button with a heart icon">
           <mat-icon>send</mat-icon>

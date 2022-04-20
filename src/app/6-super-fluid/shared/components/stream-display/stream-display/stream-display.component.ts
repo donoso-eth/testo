@@ -16,23 +16,28 @@ export class StreamDisplayComponent implements OnChanges, OnInit, OnDestroy {
   balanceZeroDec!: string;
   twoDec!: string;
   fourDec!: string;
+
+  balanceDAI = '0';
+
   constructor() { 
  
    
   }
   ngOnInit(): void {
-    this.getStreams();
+
   }
   @Input() public stream!: ISTREAM_DISPLAY
 
   ngOnChanges(changes: SimpleChanges): void {
-      
-    console.log(this.stream)
+    this.destroyHooks.next()
+    this.getStreams()
   }
 
   async getStreams() {
 
-    console.log(this.stream)  
+  
+    this.balanceDAI = ((+this.stream.balanceDAI.toString())!/(10 ** 18)).toFixed(2);
+    console.log(this.stream.balanceDAIx.toString())
 
     this.positive = [];
     this.negative = [];
@@ -52,26 +57,32 @@ export class StreamDisplayComponent implements OnChanges, OnInit, OnDestroy {
       }
 
     }
-    console.log(this.flowRate);
+    
     this.monthlyInflow = +((this.flowRate * 30 * 24 * 60 * 60)/10**18).toFixed(2);;
 
 
-    console.log(this.monthlyInflow)
+
+    this.prepareNumbers(+this.stream.balanceDAIx);
+
+    if (this.monthlyInflow !== 0){
     const source = interval(100);
-    //output: 0,1,2,3,4,5....
-    const subscribe = source
+    source
       .pipe(takeUntil(this.destroyHooks))
       .subscribe((val) => {
+
         this.prepareNumbers(+this.stream.balanceDAIx + (val * this.flowRate) / 10);
       });
+    }
   }
 
   prepareNumbers(balance: number) {
-    this.balanceZeroDec = (balance / 10 ** 18).toFixed(0);
+    
+
 
     const niceTwo = (balance / 10 ** 18).toFixed(2);
-    this.twoDec = niceTwo.substring(niceTwo.length - 2, niceTwo.length);
-
+   
+    this.twoDec = (niceTwo)
+    
     const niceFour = (balance / 10 ** 18).toFixed(6);
 
     this.fourDec = niceFour.substring(niceFour.length - 4, niceFour.length);

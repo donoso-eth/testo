@@ -1,7 +1,7 @@
 <onchain-home (doFaucetEvent)="doFaucet()" *ngIf="contractHeader !== undefined" [contractHeader]="contractHeader"
   [blockchain_is_busy]="blockchain_is_busy">
   <h2>💃💃💃 Your First Super Fluid dApp👏 👏 👏</h2>
-  <div style="max-width: 800px; width: 90vw; margin: auto">
+  <div style="width: 90vw; margin: auto">
     <mat-tab-group *ngIf="loading_framework == 'found'" mat-align-tabs="center">
       <mat-tab label="Start a Stream">
         <app-stream [fake_accounts]="fake_accounts"></app-stream>

@@ -18,42 +18,51 @@
   </button> -->
 </p>
 <p>
-  <button (click)="stopQuery()" mat-raised-button color="accent" style="margin: 10px" class="btn_send">
-    Stop Query
+  <button (click)="fundBurnerUsers()" mat-raised-button color="accent" style="margin: 10px" class="btn_send">
+    Fund Accounts
   </button>
 </p>
 <div class="wrapper_blocks">
 
 
   <div class="user">
-    <h1>Alice  <i (click)="launchStream('alice')" style="" class="material-icons stream">water</i> </h1>
+    <h1>Alice {{aliceBalance}} MATIC </h1>
+    <address-show style="font-size:22px;font-weight:400" [address_to_show]="fake_accounts.alice.user_address">
+    </address-show> 
     <div style="display: inline-flex;align-items: center;">
       <i (click)="doFaucet('alice')" style="" class="material-icons faucet">local_gas_station</i>
-      <address-show style="font-size:22px;font-weight:400" [address_to_show]="fake_accounts.alice.user_address">
-      </address-show> 
+      <i (click)="upgrade('alice')" style="" class="material-icons faucet">upgrade</i>
+      <i (click)="upgrade('alice')" style="" class="material-icons faucet"> vertical_align_bottom</i>
+      <i (click)="launchStream('alice')" style="" class="material-icons stream">water</i> 
     </div>
     <stream-display class="user_block" *ngIf="aliceStream !== undefined" [stream]="aliceStream"></stream-display>
   </div>
 
   <div class="user">
-    <h1>Eve  <i (click)="launchStream('eve')" style="" class="material-icons stream">water</i></h1>
+    <h1>Bob {{bobBalance}} MATIC </h1>
+    <address-show style="font-size:22px;font-weight:400" [address_to_show]="fake_accounts.bob.user_address">
+    </address-show> 
     <div style="display: inline-flex;align-items: center;">
-      <address-show style="font-size:22px;font-weight:400" [address_to_show]="fake_accounts.eve.user_address">
-      </address-show> <i (click)="doFaucet('eve')" style="" class="material-icons faucet">local_gas_station</i>
+      <i (click)="doFaucet('bob')" style="" class="material-icons faucet">local_gas_station</i>
+      <i (click)="upgrade('bob')" style="" class="material-icons faucet">upgrade</i>
+      <i (click)="upgrade('bob')" style="" class="material-icons faucet"> vertical_align_bottom</i>
+      <i (click)="launchStream('bob')" style="" class="material-icons stream">water</i> 
     </div>
-    <stream-display class="user_block" *ngIf="eveStream!== undefined" [stream]="eveStream"></stream-display>
+    <stream-display class="user_block" *ngIf="bobStream !== undefined" [stream]="bobStream"></stream-display>
   </div>
 
-
-
-  <!-- 
-  <div>
-    <stream-display class="user_block" *ngIf="eveStream !== undefined"  [stream]="eveStream"></stream-display>
+  <div class="user">
+    <h1>Eve {{eveBalance}} MATIC </h1>
+    <address-show style="font-size:22px;font-weight:400" [address_to_show]="fake_accounts.eve.user_address">
+    </address-show> 
+    <div style="display: inline-flex;align-items: center;">
+      <i (click)="doFaucet('eve')" style="" class="material-icons faucet">local_gas_station</i>
+      <i (click)="upgrade('eve')" style="" class="material-icons faucet">upgrade</i>
+      <i (click)="upgrade('eve')" style="" class="material-icons faucet"> vertical_align_bottom</i>
+      <i (click)="launchStream('eve')" style="" class="material-icons stream">water</i> 
+    </div>
+    <stream-display class="user_block" *ngIf="eveStream !== undefined" [stream]="eveStream"></stream-display>
   </div>
-
-  <div>
-    <stream-display class="user_block" *ngIf="eveStream !== undefined"  [stream]="eveStream"></stream-display>
-  </div> -->
 
 
 </div>

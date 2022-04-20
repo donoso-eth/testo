@@ -22,11 +22,12 @@
 }
 
 .stream {
-    top: 5px;
+    top: -5px;
     position: relative;
     font-size: 27px;
     color: #3ebf31;
     cursor: pointer;
+    margin:0 5px;
 }
 
 .faucet {
@@ -36,5 +37,7 @@
     right: 10px;
     font-size: 28px;
     color: #ff4081;
+    cursor: pointer;
+    margin:0 5px;
  
 }

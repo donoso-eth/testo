@@ -21,6 +21,7 @@ import { first, firstValueFrom } from 'rxjs';
 import { DialogService, NotifierService } from '../../dapp-components';
 import { FormControl, Validators } from '@angular/forms';
 import { SuperFluidServiceService } from 'src/app/dapp-injector/services/super-fluid/super-fluid-service.service';
+import { doSignerTransaction } from 'src/app/dapp-injector/classes/transactor';
 
 @Component({
   selector: 'super-fluid',
@@ -80,6 +81,9 @@ export class SuperFluidDemoComponent extends DappBaseComponent implements OnInit
 
       this.fake_accounts = { alice, bob, eve};
 
+
+
+
       this.loading_framework == 'found'
 
 
@@ -138,6 +142,7 @@ export class SuperFluidDemoComponent extends DappBaseComponent implements OnInit
     const user_address = await user.getAddress();
     return { user, user_address };
   }
+
 
 
   async createGravatar() {

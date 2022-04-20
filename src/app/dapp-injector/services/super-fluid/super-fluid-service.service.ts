@@ -19,7 +19,15 @@ export class SuperFluidServiceService {
   flow!: ConstantFlowAgreementV1;
   operations: Array<Operation> = [];
 
+
   superToken = "0x5D8B4C2554aeB7e86F387B4d6c00Ac33499Ed01f" //DAIx Mumbai
+  SuperTokenContract!: SuperToken;
+
+  overrides = {
+    gasPrice: utils.parseUnits('100', 'gwei'),
+    gasLimit: 1000000,
+  }
+
 
   constructor(private dapp: DappInjector) {}
 
@@ -38,7 +46,7 @@ export class SuperFluidServiceService {
 
     this.flow = this.sf.cfaV1;
 
-    console.log(this.sf.settings);
+    this.SuperTokenContract = await this.sf.loadSuperToken(this.superToken)
 
   }
 
@@ -48,37 +56,28 @@ export class SuperFluidServiceService {
 
 ///// ---------  ---------  Money Streaming ---------  ---------  ////
 // #region Money Streaming
-  async startStream(streamConfig: {
-    flowRate: string;
-    receiver: string;
-    superToken:string;
-    data: string;
-  }) {
-    console.log(streamConfig)
-    this.operations = [];
-    await this.createStream(streamConfig);
-    const result = await this.operations[0].exec(this.dapp.DAPP_STATE.signer!);
-    const result2 = await result.wait();
-    console.log(result2)
-  }
 
   async createStream(streamConfig: {
     flowRate: string;
     receiver: string;
     superToken:string;
     data: string;
-  }) {
+  },signer:Signer) {
+
+    console.log(streamConfig)
+    const account= await signer.getAddress()
+    const aliceDAIxbalance = await this.SuperTokenContract.balanceOf({account,providerOrSigner:signer})
+    console.log(aliceDAIxbalance)
+
     const createFlowOperation = this.flow.createFlow({
       flowRate: streamConfig.flowRate,
       receiver: streamConfig.receiver,
       superToken: streamConfig.superToken,//  '0x5D8B4C2554aeB7e86F387B4d6c00Ac33499Ed01f', //environment.mumbaiDAIx,
-     // userData: streamConfig.data,
-      overrides: {
-        gasPrice: utils.parseUnits('100', 'gwei'),
-        gasLimit: 2000000,
-      },
-    });
+      userData: '',
 
+    });
+    const tx = await createFlowOperation.exec(signer);
+    const result2 = await tx.wait();
     this.operations.push(createFlowOperation);
   }
 
@@ -137,7 +136,6 @@ export class SuperFluidServiceService {
 }
 
 async getAccountFlowInfo(options:{account:string, superToken:string}){
-
 
   const result = await this.flow.getAccountFlowInfo({
     superToken: options.superToken,
@@ -201,6 +199,41 @@ async getAccountFlowInfo(options:{account:string, superToken:string}){
       ethers.utils.parseEther(approveAmount.toString())
     );
   }
+
+
+
+  /////// =========== SUPERTOKENS =========== =========== /////
+  // #region SuperTokens
+  createUpgradeOperation(amount:string){
+   const upgradeOperaton =  this.SuperTokenContract.upgrade({amount,overrides:this.overrides});
+   this.operations.push(upgradeOperaton)
+  }
+
+  // #endregion SuperTokens
+
+
+  //// ============= EXECUTON =========== =========== /////
+  // #region Execution
+
+async executeLastOperation(signer?:Signer){
+   /// If we don't pass an alternative signer
+   if (signer == undefined) {
+    signer = this.dapp.signer!
+  };
+  console.log(this.operations.length)
+  const lastIndex  = this.operations.length-1;
+  console.log(this.operations[lastIndex])
+  const tx = await this.operations[lastIndex].exec(signer);
+  const result2 = await tx.wait();
+  this.operations.pop()
+  console.log(this.operations.length)
+  console.log(result2)
+
+  return result2
+
+}
+
+
   async executeBatchCall(signer?:Signer) {
 
     /// If we don't pass an alternative signer
@@ -249,9 +282,7 @@ async getAccountFlowInfo(options:{account:string, superToken:string}){
       console.error(error);
     }
   }
-
-
-
+  // #endregion Execution
   async isSuperToken() {
     const p = this.sf.loadSuperToken('sda');
   }
