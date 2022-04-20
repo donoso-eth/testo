@@ -77,6 +77,10 @@ export class StreamDisplayComponent implements OnChanges, OnInit, OnDestroy {
 
   prepareNumbers(balance: number) {
     
+    const balanceIndex = balance.toString().indexOf(".");
+    console.log(balanceIndex)
+
+    
 
 
     const niceTwo = (balance / 10 ** 18).toFixed(2);

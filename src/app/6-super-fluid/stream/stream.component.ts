@@ -188,6 +188,8 @@ export class StreamComponent extends DappBaseComponent {
     )).toFixed(4);
 
 
+
+    
     const flowALiceBlob = await this.superFluidService.getFlow({
       superToken: this.superFluidService.superToken,
       sender: alice.user_address,
@@ -254,6 +256,23 @@ export class StreamComponent extends DappBaseComponent {
         value: utils.parseEther('10'),
       })!
     );
+    
+    const bob = this.fake_accounts.bob;
+    await doSignerTransaction(
+      this.dapp.signer?.sendTransaction({
+        to: bob.user_address,
+        value: utils.parseEther('10'),
+      })!
+    );
+
+    const eve = this.fake_accounts.bob;
+    await doSignerTransaction(
+      this.dapp.signer?.sendTransaction({
+        to: eve.user_address,
+        value: utils.parseEther('10'),
+      })!
+    );
+
 
     this.refreshBalances();
   }
