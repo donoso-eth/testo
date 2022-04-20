@@ -183,7 +183,7 @@ export class StreamComponent extends DappBaseComponent {
         providerOrSigner: eve.user,
       });
 
-    this.bobBalance = (+utils.formatEther(
+    this.eveBalance = (+utils.formatEther(
       await this.dapp.provider?.getBalance(eve.user_address)!
     )).toFixed(4);
 
@@ -265,7 +265,7 @@ export class StreamComponent extends DappBaseComponent {
       })!
     );
 
-    const eve = this.fake_accounts.bob;
+    const eve = this.fake_accounts.eve;
     await doSignerTransaction(
       this.dapp.signer?.sendTransaction({
         to: eve.user_address,
