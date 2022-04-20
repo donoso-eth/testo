@@ -64,10 +64,9 @@ export class SuperFluidServiceService {
     data: string;
   },signer:Signer) {
 
-    console.log(streamConfig)
+
     const account= await signer.getAddress()
     const aliceDAIxbalance = await this.SuperTokenContract.balanceOf({account,providerOrSigner:signer})
-    console.log(aliceDAIxbalance)
 
     const createFlowOperation = this.flow.createFlow({
       flowRate: streamConfig.flowRate,
@@ -76,9 +75,22 @@ export class SuperFluidServiceService {
       userData: '',
 
     });
-    const tx = await createFlowOperation.exec(signer);
-    const result2 = await tx.wait();
-    this.operations.push(createFlowOperation);
+
+  
+   
+
+    try {
+     // console.log(await createFlowOperation.getSignedTransaction(signer))
+      // const tx = await createFlowOperation.exec(signer);
+      // console.log(tx)
+      // const result2 = await tx.wait();
+      // this.operations.push(createFlowOperation);
+    } catch (error) {
+      // this.dapp.provider?.getTransactionReceipt()
+      // this.dapp.provider?.getTransaction()
+      console.log(JSON.stringify(error))
+    }
+  
   }
 
 
@@ -125,7 +137,7 @@ export class SuperFluidServiceService {
 
   //// VIEW READ FUNCITONS
   async getFlow(options:{sender:string, receiver:string,superToken:string}) {
-    console.log(options)
+
   const result = await this.flow.getFlow({
     superToken: options.superToken,
     sender: options.sender.toLowerCase(),

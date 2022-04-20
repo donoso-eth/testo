@@ -11,6 +11,7 @@
     "compile": "cd hardhat && npx hardhat --tsconfig ./tsconfig.hardhat.json compile",
     "fork": "cd hardhat && npx hardhat --tsconfig ./tsconfig.hardhat.json node  --network hardhat",
     "deploy": "cd hardhat && npx hardhat --tsconfig ./tsconfig.hardhat.json run ./scripts/deploy.ts",
+    "task": "cd hardhat && npx hardhat --tsconfig ./tsconfig.hardhat.json",
     "contracts:test": "cd hardhat && npx hardhat --tsconfig ./tsconfig.hardhat.json test",
     "contracts:coverage": "cd hardhat && npx hardhat --tsconfig ./tsconfig.hardhat.json coverage",
     "watch-contract": "cd hardhat && node scripts/helpers/watch.js",

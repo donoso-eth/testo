@@ -36,6 +36,20 @@ task('DAI_Impersonate', 'DAI_Impersonate').setAction(async ({}, hre) => {
   const deployer_provider = hre.ethers.provider
   const deployerKey = process.env["PRIVATE_KEY"] as BytesLike;
 
+  const res = await deployer_provider.getBlockNumber()
+  const res2 = (await deployer_provider.getBlockWithTransactions(res)).transactions
+  const res3 = await deployer_provider.getTransaction("0xcb623a7e51b2c2c550e886157b75fd8ff5c9ae1c0c72c19a303e249c758db0e2")
+  const res4 = await deployer_provider.getTransactionReceipt("0xcb623a7e51b2c2c550e886157b75fd8ff5c9ae1c0c72c19a303e249c758db0e2")
+  console.log(res4.logs)
+
+  for (const logy of res4.logs){
+    console.log(logy.topics)
+  }
+
+  // console.log(res4)
+
+//// 
+  return
   const deployer_wallet = new Wallet(deployerKey);
   const deployer = await deployer_wallet.connect(deployer_provider);
 

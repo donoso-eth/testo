@@ -134,7 +134,7 @@ export class StreamComponent extends DappBaseComponent {
 
     // const tx_result =  await this.superFluidService.executeLastOperation(sender)
     //console.log(tx_result)
-    this.refreshBalances();
+  //  this.refreshBalances();
   }
 
   async refreshBalances() {
@@ -190,14 +190,24 @@ export class StreamComponent extends DappBaseComponent {
 
 
     
-    const flowALiceBlob = await this.superFluidService.getFlow({
+    const flowAliceBob = await this.superFluidService.getFlow({
       superToken: this.superFluidService.superToken,
       sender: alice.user_address,
       receiver: bob.user_address,
     });
-    if (+flowALiceBlob.flowRate >0){
-      aliceStreams.push({address:bob.user_address, value:-flowALiceBlob.flowRate})
-      bobStreams.push({address:alice.user_address, value:+flowALiceBlob.flowRate})
+    if (+flowAliceBob.flowRate >0){
+      aliceStreams.push({address:bob.user_address, value:-flowAliceBob.flowRate})
+      bobStreams.push({address:alice.user_address, value:+flowAliceBob.flowRate})
+    }
+
+    const floweBobAlice = await this.superFluidService.getFlow({
+      superToken: this.superFluidService.superToken,
+      sender: bob.user_address,
+      receiver: alice.user_address,
+    });
+    if (+floweBobAlice.flowRate >0){
+      bobStreams.push({address:alice.user_address, value:-floweBobAlice.flowRate})
+      aliceStreams.push({address:bob.user_address, value:+floweBobAlice.flowRate})
     }
 
 
@@ -207,8 +217,19 @@ export class StreamComponent extends DappBaseComponent {
       receiver: eve.user_address,
     });
     if (+flowAliceEve.flowRate >0){
-      aliceStreams.push({address:eve.user_address, value:-flowALiceBlob.flowRate})
-      eveStreams.push({address:alice.user_address, value:+flowALiceBlob.flowRate})
+      aliceStreams.push({address:eve.user_address, value:-flowAliceEve.flowRate})
+      eveStreams.push({address:alice.user_address, value:+flowAliceEve.flowRate})
+    }
+
+
+    const flowEveAlice = await this.superFluidService.getFlow({
+      superToken: this.superFluidService.superToken,
+      sender: eve.user_address,
+      receiver: alice.user_address,
+    });
+    if (+flowEveAlice.flowRate >0){
+      eveStreams.push({address:alice.user_address, value:-flowEveAlice.flowRate})
+      aliceStreams.push({address:eve.user_address, value:+flowEveAlice.flowRate})
     }
 
 
@@ -218,10 +239,19 @@ export class StreamComponent extends DappBaseComponent {
       receiver: eve.user_address,
     });
     if (+flowBobEve.flowRate >0){
-      bobStreams.push({address:eve.user_address, value:-flowALiceBlob.flowRate})
-      eveStreams.push({address:bob.user_address, value:+flowALiceBlob.flowRate})
+      bobStreams.push({address:eve.user_address, value:-flowBobEve.flowRate})
+      eveStreams.push({address:bob.user_address, value:+flowBobEve.flowRate})
     }
 
+    const flowEveBob = await this.superFluidService.getFlow({
+      superToken: this.superFluidService.superToken,
+      sender: eve.user_address,
+      receiver: bob.user_address,
+    });
+    if (+flowEveBob.flowRate >0){
+      eveStreams.push({address:bob.user_address, value:-flowEveBob.flowRate})
+      bobStreams.push({address:eve.user_address, value:+flowEveBob.flowRate})
+    }
 
 
 

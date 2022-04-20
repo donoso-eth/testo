@@ -37,13 +37,13 @@ export class StreamDisplayComponent implements OnChanges, OnInit, OnDestroy {
 
   
     this.balanceDAI = ((+this.stream.balanceDAI.toString())!/(10 ** 18)).toFixed(2);
-    console.log(this.stream.balanceDAIx.toString())
+
 
     this.positive = [];
     this.negative = [];
     this.flowRate = 0;
     for (const stream of this.stream.streams) {
-      console.log(stream);
+    
       this.flowRate = this.flowRate + +stream.value;
 
       let monthValue = (+stream.value *(30*24*60*60)/10**18).toFixed(2)
@@ -78,7 +78,7 @@ export class StreamDisplayComponent implements OnChanges, OnInit, OnDestroy {
   prepareNumbers(balance: number) {
     
     const balanceIndex = balance.toString().indexOf(".");
-    console.log(balanceIndex)
+
 
     
 
