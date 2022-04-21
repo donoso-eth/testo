@@ -128,9 +128,12 @@ export class StreamComponent extends DappBaseComponent {
         receiver,
         superToken: this.superFluidService.superToken,
         data: '',
-      },
-      sender
+      }
     );
+
+
+    const tx = await this.superFluidService.executeLastOperation(sender)
+    console.log(tx)
 
     // const tx_result =  await this.superFluidService.executeLastOperation(sender)
     //console.log(tx_result)
@@ -144,9 +147,13 @@ export class StreamComponent extends DappBaseComponent {
       });
 
 
-    const alice = this.fake_accounts.alice;
-    const bob = this.fake_accounts.bob;
-    const eve = this.fake_accounts.eve;
+      const alice = this.fake_accounts.alice;
+      const bob = this.fake_accounts.bob;
+      const eve = this.fake_accounts.eve;
+
+      const res =   await  this.superFluidService.sf.query.listStreams({sender: alice.user_address})
+        console.log(res)
+
 
     //// alice
     let aliceStreams = [];

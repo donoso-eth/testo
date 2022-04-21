@@ -36,7 +36,7 @@ export class OperationComponent implements OnInit {
   ) {
     this.input_form = new FormGroup({
       toCtrl: new FormControl('', Validators.required),
-      amountCtrl: new FormControl(0, [
+      amountCtrl: new FormControl(10, [
         Validators.required,
         Validators.min(0.01),
       ]),

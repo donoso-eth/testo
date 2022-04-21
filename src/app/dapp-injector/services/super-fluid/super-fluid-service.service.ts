@@ -19,15 +19,13 @@ export class SuperFluidServiceService {
   flow!: ConstantFlowAgreementV1;
   operations: Array<Operation> = [];
 
-
-  superToken = "0x5D8B4C2554aeB7e86F387B4d6c00Ac33499Ed01f" //DAIx Mumbai
+  superToken = '0x5D8B4C2554aeB7e86F387B4d6c00Ac33499Ed01f'; //DAIx Mumbai
   SuperTokenContract!: SuperToken;
 
   overrides = {
     gasPrice: utils.parseUnits('100', 'gwei'),
     gasLimit: 1000000,
-  }
-
+  };
 
   constructor(private dapp: DappInjector) {}
 
@@ -35,89 +33,124 @@ export class SuperFluidServiceService {
 
   async initializeFramework() {
     if (this.sf == undefined) {
+      this.sf = await Framework.create({
+        networkName: 'local',
+        provider: this.dapp.DAPP_STATE.defaultProvider!,
+        customSubgraphQueriesEndpoint:
+          'https://api.thegraph.com/subgraphs/name/superfluid-finance/protocol-v1-mumbai',
+        resolverAddress: '0x8C54C83FbDe3C59e59dd6E324531FB93d4F504d3',
+      });
 
-    this.sf = await Framework.create({
-      networkName: 'local',
-      provider: this.dapp.DAPP_STATE.defaultProvider!,
-      customSubgraphQueriesEndpoint:"https://api.thegraph.com/subgraphs/name/superfluid-finance/protocol-v1-mumbai",
-      resolverAddress:"0x8C54C83FbDe3C59e59dd6E324531FB93d4F504d3",
+      this.flow = this.sf.cfaV1;
 
-    });
-
-    this.flow = this.sf.cfaV1;
-
-    this.SuperTokenContract = await this.sf.loadSuperToken(this.superToken)
-
-  }
+      this.SuperTokenContract = await this.sf.loadSuperToken(this.superToken);
+    }
 
     //675833120
+  
   }
 
-
-///// ---------  ---------  Money Streaming ---------  ---------  ////
-// #region Money Streaming
-
-  async createStream(streamConfig: {
-    flowRate: string;
-    receiver: string;
-    superToken:string;
-    data: string;
-  },signer:Signer) {
+  ///// ---------  ---------  Money Streaming ---------  ---------  ////
+  // #region Money Streaming
 
 
-    const account= await signer.getAddress()
-    const aliceDAIxbalance = await this.SuperTokenContract.balanceOf({account,providerOrSigner:signer})
+
+  async createStream(
+    streamConfig: {
+      flowRate: string;
+      receiver: string;
+      superToken: string;
+      data: string;
+    }
+  ) {
 
     const createFlowOperation = this.flow.createFlow({
       flowRate: streamConfig.flowRate,
       receiver: streamConfig.receiver,
-      superToken: streamConfig.superToken,//  '0x5D8B4C2554aeB7e86F387B4d6c00Ac33499Ed01f', //environment.mumbaiDAIx,
+      superToken: streamConfig.superToken, //  '0x5D8B4C2554aeB7e86F387B4d6c00Ac33499Ed01f', //environment.mumbaiDAIx,
       userData: '',
-
     });
 
-  
-   
-
     try {
-     // console.log(await createFlowOperation.getSignedTransaction(signer))
-      // const tx = await createFlowOperation.exec(signer);
-      // console.log(tx)
-      // const result2 = await tx.wait();
-      // this.operations.push(createFlowOperation);
-    } catch (error) {
-      // this.dapp.provider?.getTransactionReceipt()
-      // this.dapp.provider?.getTransaction()
-      console.log(JSON.stringify(error))
+      this.operations.push(createFlowOperation);
+    } catch (error: any) {
+      console.log(error);
     }
-  
   }
 
+  async handleContractError(e: any) {
+    // console.log(e);
+    // Accounts for Metamask and default signer on all networks
+    let myMessage =
+      e.data && e.data.message
+        ? e.data.message
+        : e.error && JSON.parse(JSON.stringify(e.error)).body
+        ? JSON.parse(JSON.parse(JSON.stringify(e.error)).body).error.message
+        : e.data
+        ? e.data
+        : JSON.stringify(e);
+    if (!e.error && e.message) {
+      myMessage = e.message;
+    }
+
+    try {
+      let obj = JSON.parse(myMessage);
+      if (obj && obj.body) {
+        let errorObj = JSON.parse(obj.body);
+        if (errorObj && errorObj.error && errorObj.error.message) {
+          myMessage = errorObj.error.message;
+        }
+      }
+    } catch (e) {
+      //ignore
+    }
+
+    return myMessage;
+  }
 
   async stopStream(streamConfig: {
     receiver: string;
-    sender:string;
+    sender: string;
     data: string;
-    superToken:string,
-    signer?:Signer
+    superToken: string;
+    signer?: Signer;
   }) {
-
-
-
-    const createFlowOperation = this.sf.cfaV1.deleteFlow({
+    const stopFlowOperation = this.sf.cfaV1.deleteFlow({
       sender: streamConfig.sender,
       receiver: streamConfig.receiver,
       superToken: '0x5D8B4C2554aeB7e86F387B4d6c00Ac33499Ed01f', //environment.mumbaiDAIx,
-     // userData: streamConfig.data,
+      // userData: streamConfig.data,
       overrides: {
         gasPrice: utils.parseUnits('100', 'gwei'),
         gasLimit: 2000000,
       },
     });
-    const result = await createFlowOperation.exec(this.dapp.DAPP_STATE.signer!);
-    const result2 = await result.wait();
-    console.log(result2)
+    this.operations.push(stopFlowOperation);
   }
+
+
+  async updateStream(streamConfig: {
+    receiver: string;
+    sender: string;
+    flowRate: string;
+    data: string;
+    superToken: string;
+    signer?: Signer;
+  }) {
+    const updateFlowOperation = this.sf.cfaV1.updateFlow({
+      flowRate: streamConfig.flowRate,
+      sender: streamConfig.sender,
+      receiver: streamConfig.receiver,
+      superToken: '0x5D8B4C2554aeB7e86F387B4d6c00Ac33499Ed01f', //environment.mumbaiDAIx,
+      // userData: streamConfig.data,
+      overrides: {
+        gasPrice: utils.parseUnits('100', 'gwei'),
+        gasLimit: 2000000,
+      },
+    });
+    this.operations.push(updateFlowOperation);
+  }
+
 
   calculateFlowRate(amount: any) {
     if (typeof Number(amount) !== 'number' || isNaN(Number(amount)) === true) {
@@ -136,36 +169,38 @@ export class SuperFluidServiceService {
   }
 
   //// VIEW READ FUNCITONS
-  async getFlow(options:{sender:string, receiver:string,superToken:string}) {
+  async getFlow(options: {
+    sender: string;
+    receiver: string;
+    superToken: string;
+  }) {
+    const result = await this.flow.getFlow({
+      superToken: options.superToken,
+      sender: options.sender.toLowerCase(),
+      receiver: options.receiver.toLowerCase(),
+      providerOrSigner: this.dapp.signer!,
+    });
+    return result;
+  }
 
-  const result = await this.flow.getFlow({
-    superToken: options.superToken,
-    sender: options.sender.toLowerCase(),
-    receiver: options.receiver.toLowerCase(),
-    providerOrSigner: this.dapp.signer!
-  });
-  return result
-}
+  async getAccountFlowInfo(options: { account: string; superToken: string }) {
+    const result = await this.flow.getAccountFlowInfo({
+      superToken: options.superToken,
+      account: options.account,
+      providerOrSigner: this.dapp.signer!,
+    });
+    return result;
+  }
 
-async getAccountFlowInfo(options:{account:string, superToken:string}){
+  // async getNetFlow(){
+  //   await this.flow.getNetFlow({
+  //     superToken: string,
+  //     account: string,
+  //     providerOrSigner: Signer
+  //   });
+  //}
 
-  const result = await this.flow.getAccountFlowInfo({
-    superToken: options.superToken,
-    account: options.account,
-    providerOrSigner: this.dapp.signer!
-  });
-  return result
-}
-
-// async getNetFlow(){
-//   await this.flow.getNetFlow({
-//     superToken: string,
-//     account: string,
-//     providerOrSigner: Signer
-//   });
-//}
-
- // #endregion Money Streaming
+  // #endregion Money Streaming
 
   async createIndex() {
     try {
@@ -212,47 +247,43 @@ async getAccountFlowInfo(options:{account:string, superToken:string}){
     );
   }
 
-
-
   /////// =========== SUPERTOKENS =========== =========== /////
   // #region SuperTokens
-  createUpgradeOperation(amount:string){
-   const upgradeOperaton =  this.SuperTokenContract.upgrade({amount,overrides:this.overrides});
-   this.operations.push(upgradeOperaton)
+  createUpgradeOperation(amount: string) {
+    const upgradeOperaton = this.SuperTokenContract.upgrade({
+      amount,
+      overrides: this.overrides,
+    });
+    this.operations.push(upgradeOperaton);
   }
 
   // #endregion SuperTokens
 
-
   //// ============= EXECUTON =========== =========== /////
   // #region Execution
 
-async executeLastOperation(signer?:Signer){
-   /// If we don't pass an alternative signer
-   if (signer == undefined) {
-    signer = this.dapp.signer!
-  };
-  console.log(this.operations.length)
-  const lastIndex  = this.operations.length-1;
-  console.log(this.operations[lastIndex])
-  const tx = await this.operations[lastIndex].exec(signer);
-  const result2 = await tx.wait();
-  this.operations.pop()
-  console.log(this.operations.length)
-  console.log(result2)
-
-  return result2
-
-}
-
-
-  async executeBatchCall(signer?:Signer) {
-
+  async executeLastOperation(signer?: Signer) {
     /// If we don't pass an alternative signer
     if (signer == undefined) {
-      signer = this.dapp.signer!
-    };
+      signer = this.dapp.signer!;
+    }
+    console.log(this.operations.length);
+    const lastIndex = this.operations.length - 1;
+    console.log(this.operations[lastIndex]);
+    const tx = await this.operations[lastIndex].exec(signer);
+    const result2 = await tx.wait();
+    this.operations.pop();
+    console.log(this.operations.length);
+    console.log(result2);
 
+    return result2;
+  }
+
+  async executeBatchCall(signer?: Signer) {
+    /// If we don't pass an alternative signer
+    if (signer == undefined) {
+      signer = this.dapp.signer!;
+    }
 
     // const DAIx = await this.sf.loadSuperToken(
     //   '0xe3cb950cb164a31c66e32c320a800d477019dcff'
