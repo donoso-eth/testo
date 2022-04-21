@@ -6,26 +6,13 @@
       <mat-tab label="Start a Stream">
         <app-stream [fake_accounts]="fake_accounts"></app-stream>
 
-        <div style="
-            margin: 20px 10px;
-            text-align: center;
-            padding: 20px;
-            border: 1px solid rgb(47, 213, 255); ;
-          ">
-
-
-
-
-
-        </div>
       </mat-tab>
-      <mat-tab style="height: fit-content; text-align: left" label="Instant Distribution Agreement">
-        <app-ida></app-ida>
-        <br />
-        <br />
+      <mat-tab  label="Instant Distribution Agreement">
+        <app-ida [fake_accounts]="fake_accounts"></app-ida>
+ 
       </mat-tab>
-      <mat-tab style="height: fit-content; text-align: left" label="Super App">
-        <super-app> </super-app>
+      <mat-tab  label="Super App">
+        <super-app [fake_accounts]="fake_accounts"> </super-app>
         <br />
       </mat-tab>
     </mat-tab-group>

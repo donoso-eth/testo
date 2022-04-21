@@ -17,6 +17,8 @@ import { DappInjector } from '../../dapp-injector.service';
 export class SuperFluidServiceService {
   sf!: Framework;
   flow!: ConstantFlowAgreementV1;
+  ida!: InstantDistributionAgreementV1;
+
   operations: Array<Operation> = [];
 
   superToken = '0x5D8B4C2554aeB7e86F387B4d6c00Ac33499Ed01f'; //DAIx Mumbai
@@ -42,28 +44,22 @@ export class SuperFluidServiceService {
       });
 
       this.flow = this.sf.cfaV1;
-
+      this.ida = this.sf.idaV1;
       this.SuperTokenContract = await this.sf.loadSuperToken(this.superToken);
     }
 
     //675833120
-  
   }
 
   ///// ---------  ---------  Money Streaming ---------  ---------  ////
   // #region Money Streaming
 
-
-
-  async createStream(
-    streamConfig: {
-      flowRate: string;
-      receiver: string;
-      superToken: string;
-      data: string;
-    }
-  ) {
-
+  async createStream(streamConfig: {
+    flowRate: string;
+    receiver: string;
+    superToken: string;
+    data: string;
+  }) {
     const createFlowOperation = this.flow.createFlow({
       flowRate: streamConfig.flowRate,
       receiver: streamConfig.receiver,
@@ -128,7 +124,6 @@ export class SuperFluidServiceService {
     this.operations.push(stopFlowOperation);
   }
 
-
   async updateStream(streamConfig: {
     receiver: string;
     sender: string;
@@ -150,7 +145,6 @@ export class SuperFluidServiceService {
     });
     this.operations.push(updateFlowOperation);
   }
-
 
   calculateFlowRate(amount: any) {
     if (typeof Number(amount) !== 'number' || isNaN(Number(amount)) === true) {
@@ -202,37 +196,61 @@ export class SuperFluidServiceService {
 
   // #endregion Money Streaming
 
+  ///// ---------  ---------  Instant Distribution ---------  ---------  ////
+  // #region  Instant Distribution
+
   async createIndex() {
     try {
-      let id = '';
-      let DAIx = '';
-      let address = '';
-      let shares = '2';
-      let amount = '2';
+      const id = (Math.floor(Math.random() * 1000000000)).toString();
 
+   
       const createIndexOperation = this.sf.idaV1.createIndex({
-        indexId: 'id',
-        superToken: 'DAIx',
+        indexId: id,
+        superToken: this.superToken,
         // userData?: string
       });
 
-      const updateSubscriptionOperation = this.sf.idaV1.updateSubscriptionUnits(
-        {
-          indexId: id,
-          superToken: DAIx,
-          subscriber: address,
-          units: shares,
-          // userData?: string
-        }
-      );
-      const distributeOperation = this.sf.idaV1.distribute({
-        indexId: id,
-        superToken: DAIx,
-        amount: amount,
-        // userData?: string
-      });
+      this.operations.push(createIndexOperation);
+      return id;
     } catch (error) {}
+    return;
   }
+  async updateIndex(config: {
+    id: string;
+    supertoken?: string;
+    shares: string;
+    subscriber: string;
+  }) {
+    const updateSubscriptionOperation = this.sf.idaV1.updateSubscriptionUnits({
+      indexId: config.id,
+      superToken: config.supertoken ? config.supertoken : this.superToken,
+      subscriber: config.subscriber,
+      units: config.shares,
+      // userData?: string
+    });
+    this.operations.push(updateSubscriptionOperation);
+  }
+  async distributeIndex(config: {
+    id: string;
+    supertoken?: string;
+    amount: string;
+  }) {
+    const distributeOperation = this.sf.idaV1.distribute({
+      indexId: config.id,
+      superToken: config.supertoken ? config.supertoken : this.superToken,
+      amount: config.amount,
+      // userData?: string
+    });
+
+
+
+    this.operations.push(distributeOperation);
+  }
+
+
+
+
+  // #endregion  Instant Distribution
 
   async bathcall() {
     const DAI = new ethers.Contract(

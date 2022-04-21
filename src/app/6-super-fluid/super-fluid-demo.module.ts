@@ -16,6 +16,8 @@ import { IdaComponent } from './ida/ida.component';
 import { SuperAppComponent } from './super-app/super-app.component';
 import { SuperFluidServiceModule } from '../dapp-injector/services/super-fluid/super-fluid-service.module';
 import { StreamDisplayModule } from './shared/components/stream-display/stream-display.module';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
 export const contractMetadata = new InjectionToken<ICONTRACT_METADATA>('contractMetadata')
 
 export const contractProvider= {provide: 'contractMetadata', useValue:SuperFluidMetadata };
@@ -35,6 +37,7 @@ export const contractProvider= {provide: 'contractMetadata', useValue:SuperFluid
     ReactiveFormsModule,
     MatTabsModule,
     MatButtonModule,
+    MatTooltipModule,
     BlockchainModule,
     WalletDisplayModule,
     AddressShowModule,

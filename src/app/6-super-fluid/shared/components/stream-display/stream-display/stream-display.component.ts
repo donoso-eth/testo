@@ -7,7 +7,7 @@ import { ISTREAM_DISPLAY } from '../../../models/models';
   templateUrl: './stream-display.component.html',
   styleUrls: ['./stream-display.component.scss']
 })
-export class StreamDisplayComponent implements OnChanges, OnInit, OnDestroy {
+export class StreamDisplayComponent implements OnChanges, OnDestroy {
   public destroyHooks: Subject<void> = new Subject();
   flowRate!: number;
   positive:Array<{ value: number; address: string; }> = [];
@@ -23,9 +23,7 @@ export class StreamDisplayComponent implements OnChanges, OnInit, OnDestroy {
  
    
   }
-  ngOnInit(): void {
-
-  }
+  @Input() public display_type!: 'FLOW' | 'IDA'
   @Input() public stream!: ISTREAM_DISPLAY
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -42,7 +40,8 @@ export class StreamDisplayComponent implements OnChanges, OnInit, OnDestroy {
     this.positive = [];
     this.negative = [];
     this.flowRate = 0;
-    for (const stream of this.stream.streams) {
+    if (this.display_type == 'FLOW') {
+    for (const stream of this.stream.streams!) {
     
       this.flowRate = this.flowRate + +stream.value;
 
@@ -57,7 +56,7 @@ export class StreamDisplayComponent implements OnChanges, OnInit, OnDestroy {
       }
 
     }
-    
+  }
     this.monthlyInflow = +((this.flowRate * 30 * 24 * 60 * 60)/10**18).toFixed(2);;
 
 

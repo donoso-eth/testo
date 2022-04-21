@@ -16,7 +16,7 @@ import { receiveMessageOnPort } from 'worker_threads';
 
 import { FakeUser, IFakeUser, ISTREAM_DISPLAY } from '../shared/models/models';
 
-import { abi_ERC20 } from './ERC20_ABI';
+import { abi_ERC20 } from '../ERC20_ABI';
 
 @Component({
   selector: 'app-stream',
@@ -24,15 +24,8 @@ import { abi_ERC20 } from './ERC20_ABI';
   styleUrls: ['./stream.component.scss'],
 })
 export class StreamComponent extends DappBaseComponent {
-  deployerStream!: ISTREAM_DISPLAY;
-  deployer!: Signer;
 
-  deployer_balance!: number;
-  signerStream: ISTREAM_DISPLAY = {
-    balanceDAI: 0,
-    balanceDAIx: 0,
-    streams: [],
-  };
+
   aliceStream: ISTREAM_DISPLAY = { balanceDAI: 0, balanceDAIx: 0, streams: [] };
   bobStream: ISTREAM_DISPLAY = { balanceDAI: 0, balanceDAIx: 0, streams: [] };
   eveStream: ISTREAM_DISPLAY = { balanceDAI: 0, balanceDAIx: 0, streams: [] };
@@ -41,8 +34,8 @@ export class StreamComponent extends DappBaseComponent {
   bobBalance = '0';
   eveBalance = '0';
 
-  DAPP_STATE: any;
-  DAIx!: SuperToken;
+
+
   DAI!: Contract;
 
   constructor(
@@ -61,8 +54,7 @@ export class StreamComponent extends DappBaseComponent {
   };
 
   override async hookContractConnected(): Promise<void> {
-    this.deployer = this.dapp.signer!;
-
+  
     this.DAI = new Contract(
       '0x15F0Ca26781C3852f8166eD2ebce5D18265cceb7',
       abi_ERC20,
@@ -72,12 +64,9 @@ export class StreamComponent extends DappBaseComponent {
     const daiBalance = await this.DAI.balanceOf(this.signerAdress);
     console.log((daiBalance / 10 ** 18).toString());
 
-    this.DAIx = await this.superFluidService.sf.loadSuperToken(
-      this.superFluidService.superToken
-    );
+  
 
     this.refreshBalances();
-
   }
 
   async doFaucet(user: FakeUser) {
@@ -115,45 +104,37 @@ export class StreamComponent extends DappBaseComponent {
     const receiver = this.fake_accounts[result.to as FakeUser].user_address;
 
     const action = result.action;
-    console.log(action);
-    const aliceDAIxbalance =
-      await this.superFluidService.SuperTokenContract.balanceOf({
-        account: this.fake_accounts[user].user_address,
-        providerOrSigner: sender,
-      });
-    console.log(aliceDAIxbalance);
-    await this.superFluidService.createStream(
-      {
-        flowRate: result.flowRate,
-        receiver,
-        superToken: this.superFluidService.superToken,
-        data: '',
-      }
-    );
+  
 
 
-    const tx = await this.superFluidService.executeLastOperation(sender)
-    console.log(tx)
+    await this.superFluidService.createStream({
+      flowRate: result.flowRate,
+      receiver,
+      superToken: this.superFluidService.superToken,
+      data: '',
+    });
 
-    // const tx_result =  await this.superFluidService.executeLastOperation(sender)
-    //console.log(tx_result)
-  //  this.refreshBalances();
+    const tx = await this.superFluidService.executeLastOperation(sender);
+    console.log(tx);
+
+    this.refreshBalances();
   }
 
   async refreshBalances() {
-    const signerbalance = await this.superFluidService.SuperTokenContract.balanceOf({
+    const signerbalance =
+      await this.superFluidService.SuperTokenContract.balanceOf({
         account: this.dapp.signerAddress!,
         providerOrSigner: this.dapp.signer!,
       });
 
+    const alice = this.fake_accounts.alice;
+    const bob = this.fake_accounts.bob;
+    const eve = this.fake_accounts.eve;
 
-      const alice = this.fake_accounts.alice;
-      const bob = this.fake_accounts.bob;
-      const eve = this.fake_accounts.eve;
-
-      const res =   await  this.superFluidService.sf.query.listStreams({sender: alice.user_address})
-        console.log(res)
-
+    const res = await this.superFluidService.sf.query.listStreams({
+      sender: alice.user_address,
+    });
+    console.log(res);
 
     //// alice
     let aliceStreams = [];
@@ -169,7 +150,7 @@ export class StreamComponent extends DappBaseComponent {
     )).toFixed(4);
 
     /// bob
-     let bobStreams = [];
+    let bobStreams = [];
     const bobDaiBalance = await this.DAI.balanceOf(bob.user_address);
     const bobDAIxbalance =
       await this.superFluidService.SuperTokenContract.balanceOf({
@@ -194,17 +175,20 @@ export class StreamComponent extends DappBaseComponent {
       await this.dapp.provider?.getBalance(eve.user_address)!
     )).toFixed(4);
 
-
-
-    
     const flowAliceBob = await this.superFluidService.getFlow({
       superToken: this.superFluidService.superToken,
       sender: alice.user_address,
       receiver: bob.user_address,
     });
-    if (+flowAliceBob.flowRate >0){
-      aliceStreams.push({address:bob.user_address, value:-flowAliceBob.flowRate})
-      bobStreams.push({address:alice.user_address, value:+flowAliceBob.flowRate})
+    if (+flowAliceBob.flowRate > 0) {
+      aliceStreams.push({
+        address: bob.user_address,
+        value: -flowAliceBob.flowRate,
+      });
+      bobStreams.push({
+        address: alice.user_address,
+        value: +flowAliceBob.flowRate,
+      });
     }
 
     const floweBobAlice = await this.superFluidService.getFlow({
@@ -212,42 +196,63 @@ export class StreamComponent extends DappBaseComponent {
       sender: bob.user_address,
       receiver: alice.user_address,
     });
-    if (+floweBobAlice.flowRate >0){
-      bobStreams.push({address:alice.user_address, value:-floweBobAlice.flowRate})
-      aliceStreams.push({address:bob.user_address, value:+floweBobAlice.flowRate})
+    if (+floweBobAlice.flowRate > 0) {
+      bobStreams.push({
+        address: alice.user_address,
+        value: -floweBobAlice.flowRate,
+      });
+      aliceStreams.push({
+        address: bob.user_address,
+        value: +floweBobAlice.flowRate,
+      });
     }
-
 
     const flowAliceEve = await this.superFluidService.getFlow({
       superToken: this.superFluidService.superToken,
       sender: alice.user_address,
       receiver: eve.user_address,
     });
-    if (+flowAliceEve.flowRate >0){
-      aliceStreams.push({address:eve.user_address, value:-flowAliceEve.flowRate})
-      eveStreams.push({address:alice.user_address, value:+flowAliceEve.flowRate})
+    if (+flowAliceEve.flowRate > 0) {
+      aliceStreams.push({
+        address: eve.user_address,
+        value: -flowAliceEve.flowRate,
+      });
+      eveStreams.push({
+        address: alice.user_address,
+        value: +flowAliceEve.flowRate,
+      });
     }
-
 
     const flowEveAlice = await this.superFluidService.getFlow({
       superToken: this.superFluidService.superToken,
       sender: eve.user_address,
       receiver: alice.user_address,
     });
-    if (+flowEveAlice.flowRate >0){
-      eveStreams.push({address:alice.user_address, value:-flowEveAlice.flowRate})
-      aliceStreams.push({address:eve.user_address, value:+flowEveAlice.flowRate})
+    if (+flowEveAlice.flowRate > 0) {
+      eveStreams.push({
+        address: alice.user_address,
+        value: -flowEveAlice.flowRate,
+      });
+      aliceStreams.push({
+        address: eve.user_address,
+        value: +flowEveAlice.flowRate,
+      });
     }
-
 
     const flowBobEve = await this.superFluidService.getFlow({
       superToken: this.superFluidService.superToken,
       sender: bob.user_address,
       receiver: eve.user_address,
     });
-    if (+flowBobEve.flowRate >0){
-      bobStreams.push({address:eve.user_address, value:-flowBobEve.flowRate})
-      eveStreams.push({address:bob.user_address, value:+flowBobEve.flowRate})
+    if (+flowBobEve.flowRate > 0) {
+      bobStreams.push({
+        address: eve.user_address,
+        value: -flowBobEve.flowRate,
+      });
+      eveStreams.push({
+        address: bob.user_address,
+        value: +flowBobEve.flowRate,
+      });
     }
 
     const flowEveBob = await this.superFluidService.getFlow({
@@ -255,12 +260,16 @@ export class StreamComponent extends DappBaseComponent {
       sender: eve.user_address,
       receiver: bob.user_address,
     });
-    if (+flowEveBob.flowRate >0){
-      eveStreams.push({address:bob.user_address, value:-flowEveBob.flowRate})
-      bobStreams.push({address:eve.user_address, value:+flowEveBob.flowRate})
+    if (+flowEveBob.flowRate > 0) {
+      eveStreams.push({
+        address: bob.user_address,
+        value: -flowEveBob.flowRate,
+      });
+      bobStreams.push({
+        address: eve.user_address,
+        value: +flowEveBob.flowRate,
+      });
     }
-
-
 
     //// CREATING REFRESH OBJECTS
     this.aliceStream = {
@@ -280,8 +289,6 @@ export class StreamComponent extends DappBaseComponent {
       balanceDAIx: +eveDAIxbalance,
       streams: eveStreams,
     };
-
-
   }
 
   async fundBurnerUsers() {
@@ -293,7 +300,7 @@ export class StreamComponent extends DappBaseComponent {
         value: utils.parseEther('10'),
       })!
     );
-    
+
     const bob = this.fake_accounts.bob;
     await doSignerTransaction(
       this.dapp.signer?.sendTransaction({
@@ -309,7 +316,6 @@ export class StreamComponent extends DappBaseComponent {
         value: utils.parseEther('10'),
       })!
     );
-
 
     this.refreshBalances();
   }

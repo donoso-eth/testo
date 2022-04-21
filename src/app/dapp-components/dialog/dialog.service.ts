@@ -7,6 +7,7 @@ import {
 } from '@angular/material/dialog';
 import { firstValueFrom } from 'rxjs';
 import { OperationComponent } from './operation/operation.component';
+import { SuperAppDialogComponent } from './super-app/super-app.component';
 
 import { TransactionComponent } from './transaction/transaction.component';
 @Injectable({
@@ -35,4 +36,18 @@ export class DialogService {
 
     return result;
   }
+
+
+  async openSuperappStream(options:{dispatcher:any,superAppAddress:string}) {
+    const dialogRef = this.dialog.open(SuperAppDialogComponent, {
+        width: '80%',
+         maxWidth: '300px',
+        data: {  dispatcher:options.dispatcher, superAppAddress:options.superAppAddress},
+    });
+    const result = await firstValueFrom(dialogRef.afterClosed());
+
+    return result;
+  }
+
+
 }

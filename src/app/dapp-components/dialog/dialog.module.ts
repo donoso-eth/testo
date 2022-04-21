@@ -11,12 +11,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { OperationComponent } from './operation/operation.component';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
+import { SuperAppDialogComponent } from './super-app/super-app.component';
 
 
 @NgModule({
   declarations: [
     TransactionComponent,
-    OperationComponent
+    OperationComponent,
+    SuperAppDialogComponent
   ],
   imports: [
     CommonModule,

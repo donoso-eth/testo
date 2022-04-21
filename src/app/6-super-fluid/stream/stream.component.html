@@ -2,21 +2,6 @@
   <div></div>
 </div>
 
-<p style="margin: 10px; border-top: 1px solid grey">
-  <!-- <button (click)="startStream()" mat-raised-button color="accent" style="margin: 10px" class="btn_send">
-    Start Flow
-  </button>
-  <button (click)="getFlow()" mat-raised-button color="accent" style="margin: 10px" class="btn_send">
-    Get Flow
-  </button>
-  <button (click)="getAccounFlow()" mat-raised-button color="accent" style="margin: 10px" class="btn_send">
-    GetAccount Flow
-  </button>
-  <br />
-  <button (click)="stopStream()" mat-raised-button color="accent" style="margin: 10px" class="btn_send">
-    Stop Flow
-  </button> -->
-</p>
 <p>
   <button (click)="fundBurnerUsers()" mat-raised-button color="accent" style="margin: 10px" class="btn_send">
     Fund Accounts
@@ -35,7 +20,7 @@
       <i (click)="upgrade('alice')" style="" class="material-icons faucet"> vertical_align_bottom</i>
       <i (click)="launchStream('alice')" style="" class="material-icons stream">water</i> 
     </div>
-    <stream-display class="user_block" *ngIf="aliceStream !== undefined" [stream]="aliceStream"></stream-display>
+    <stream-display [display_type]="'FLOW'" class="user_block" *ngIf="aliceStream !== undefined" [stream]="aliceStream"></stream-display>
   </div>
 
   <div class="user">
@@ -48,7 +33,7 @@
       <i (click)="upgrade('bob')" style="" class="material-icons faucet"> vertical_align_bottom</i>
       <i (click)="launchStream('bob')" style="" class="material-icons stream">water</i> 
     </div>
-    <stream-display class="user_block" *ngIf="bobStream !== undefined" [stream]="bobStream"></stream-display>
+    <stream-display [display_type]="'FLOW'" class="user_block" *ngIf="bobStream !== undefined" [stream]="bobStream"></stream-display>
   </div>
 
   <div class="user">
@@ -61,7 +46,7 @@
       <i (click)="upgrade('eve')" style="" class="material-icons faucet"> vertical_align_bottom</i>
       <i (click)="launchStream('eve')" style="" class="material-icons stream">water</i> 
     </div>
-    <stream-display class="user_block" *ngIf="eveStream !== undefined" [stream]="eveStream"></stream-display>
+    <stream-display [display_type]="'FLOW'" class="user_block" *ngIf="eveStream !== undefined" [stream]="eveStream"></stream-display>
   </div>
 
 

@@ -1,0 +1,39 @@
+.wrapper_blocks {
+    display: flex;
+    justify-content: center;
+
+}
+
+.user_block {
+
+    display: block;
+
+    .user {
+        border:1px solid lightgrey
+    }
+
+ 
+
+    margin:10px;
+}
+
+.stream {
+    top: -5px;
+    position: relative;
+    font-size: 27px;
+    color: #3ebf31;
+    cursor: pointer;
+    margin:0 5px;
+}
+
+.faucet {
+    position: relative;
+    top: -4px;
+    /* left: 6px; */
+    right: 10px;
+    font-size: 28px;
+    color: #ff4081;
+    cursor: pointer;
+    margin:0 5px;
+ 
+}

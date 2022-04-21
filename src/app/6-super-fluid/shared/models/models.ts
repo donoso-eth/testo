@@ -3,7 +3,8 @@ import { BigNumber } from "ethers";
 export interface ISTREAM_DISPLAY {
   balanceDAIx: number | BigNumber;
   balanceDAI:number  | BigNumber;
-  streams: Array<{value:number , address:string}>;
+  streams?: Array<{value:number , address:string}>;
+  indexs?: Array<{id:string}>;
 }
 
 
